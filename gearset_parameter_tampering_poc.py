@@ -2,7 +2,7 @@ import requests
 import json
 
 # API endpoint for customer data retrieval
-api_url = 'https://staging.gearset.com/'
+api_url = "https://staging.gearset.com/"
 
 # Create a session to simulate a logged-in user from Team A
 session = requests.Session()
