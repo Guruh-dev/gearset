@@ -1,30 +1,36 @@
 import requests
 import json
 
-# API endpoint for customer data retrieval
-api_url = "https://staging.gearset.com/"
-
-# Create a session to simulate a logged-in user from Team A
-session = requests.Session()
-session.cookies.set('sessionid', 'valid_session_cookie_for_TeamA')
-
-def fetch_data(customer_id):
-    response = session.get(api_url, params={'customerId': customer_id})
+def test_customer_endpoint(customer_id, session_cookie):
+    url = "https://staging.gearset.com/api/customerData"
+    session = requests.Session()
+    # Set the session cookie to simulate an authenticated request for Team A
+    session.cookies.set('sessionid', session_cookie)
     
-    # Debug: print request details
-    print(f"Request URL: {response.url}")
-    print(f"Status Code: {response.status_code}")
-    print(f"Content-Type: {response.headers.get('Content-Type')}")
+    # Make the GET request with the provided customerId
+    response = session.get(url, params={'customerId': customer_id})
     
-    # Attempt to parse JSON
+    # Debug information: URL, status code, and content type
+    print(f"\n=== Testing customerId: {customer_id} ===")
+    print("Request URL:", response.url)
+    print("HTTP Status Code:", response.status_code)
+    print("Content-Type:", response.headers.get("Content-Type"))
+    
+    # Attempt to parse and pretty-print JSON, otherwise print the raw response
     try:
         data = response.json()
+        print("Response JSON:")
         print(json.dumps(data, indent=4))
     except Exception as e:
-        print("Failed to parse JSON:", response.text)
+        print("Could not parse JSON. Raw response:")
+        print(response.text)
 
-print("Team A Data Response:")
-fetch_data('TeamA')
-
-print("\nTeam B Data Response:")
-fetch_data('TeamB')
+if __name__ == "__main__":
+    # Replace 'valid_session_cookie_for_TeamA' with your actual session cookie value
+    session_cookie = "valid_session_cookie_for_TeamA"
+    
+    # Test with the legitimate Team A request
+    test_customer_endpoint("TeamA", session_cookie)
+    
+    # Test with the tampered Team B request
+    test_customer_endpoint("TeamB", session_cookie)
